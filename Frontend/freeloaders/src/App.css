@@ -1,0 +1,28 @@
+
+.App {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.Header-Footer {
+    flex: 1;
+    background-color: black;
+    color: teal;
+}
+
+.Content {
+    display: flex;
+    flex-direction: row;
+    flex: 12;
+}
+
+.sidebar {
+    background-color: aqua;
+    flex: 0.35;
+}
+
+.dashboard {
+    background-color: bisque;
+    flex: 2;
+}

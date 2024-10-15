@@ -1,0 +1,10 @@
+.button {
+    background-color:  burlywood;
+    width: 20vh;
+    height: 5vh;
+    font-size: large;
+    font-family:Arial, Helvetica, sans-serif;
+    align-items: center;
+    border-radius: 5%;
+    margin-bottom: 1vh;
+}
