@@ -1,4 +1,4 @@
-from os import  path, system as cmd
+from os import path, system as cmd
 
 
 if __name__ == "__main__":
