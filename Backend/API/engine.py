@@ -1,13 +1,16 @@
 import sqlite3 as sql
 from datetime import datetime
+from os import path
+
 
 class Engine:
     def __init__(self):
-        self._conn = sql.connect("database.db")
-        self._cursor = self._conn.cursor()
+        self._db_path = "database.db"
 
     def execute(self, query: str) -> sql.Cursor:
-        return self._cursor.execute(query)
+        conn = sql.connect(self._db_path)
+        cursor = conn.cursor()
+        return cursor.execute(query)
 
     def date(self, string:str):
         return datetime.strptime(string, "%Y-%m-%d").date()

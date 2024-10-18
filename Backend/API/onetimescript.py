@@ -4,6 +4,7 @@ from os import remove, path
 if path.exists("database.db"):
     remove("database.db")
 
+
 db = sql.connect("database.db")
 cursor = db.cursor()
 
