@@ -7,33 +7,60 @@ import "./index.css";
 // #FEF9F2
 // #C9E9D2
 
-// tailwind is enabled by default
+import { useState } from "react";
 import Navbar from "./components/Navbar";
+import Component1 from "./routes/Component1";
+import Component2 from "./routes/Component2";
+import Component3 from "./routes/Component3";
 
 function App() {
+  const [activeComponent, setActiveComponent] = useState("component1");
+
+  const renderComponent = () => {
+    switch (activeComponent) {
+      case "component1":
+        return <Component1 />;
+      case "component2":
+        return <Component2 />;
+      case "component3":
+        return <Component3 />;
+      default:
+        return <div>Select a service</div>;
+    }
+  };
+
   return (
     <div className="App h-screen overflow-hidden flex flex-col">
       <Navbar />
       {/* two divs side by side height to 100% no scroll */}
       <div className="flex flex-grow">
         <div className="w-1/4 bg-[#C9E9D2] h-full">
-          {/* Buttons with proper animation 3 buttons nutton1 button2 button3 */}
+          {/* Buttons with proper animation 3 buttons */}
           <div className="flex flex-col">
             <h1 className="text-2xl text-center mt-4 py-5 font-bold">
               Services
             </h1>
-            <button className="bg-[#789DBC] text-white p-2 m-2 rounded-md">
+            <button
+              onClick={() => setActiveComponent("component1")}
+              className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
+            >
               Button 1
             </button>
-            <button className="bg-[#789DBC] text-white p-2 m-2 rounded-md">
+            <button
+              onClick={() => setActiveComponent("component2")}
+              className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
+            >
               Button 2
             </button>
-            <button className="bg-[#789DBC] text-white p-2 m-2 rounded-md">
+            <button
+              onClick={() => setActiveComponent("component3")}
+              className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
+            >
               Button 3
             </button>
           </div>
         </div>
-        <div className="w-3/4 bg-[#FEF9F2] h-full">2</div>
+        <div className="w-3/4 bg-[#FEF9F2] h-full p-4">{renderComponent()}</div>
       </div>
     </div>
   );
