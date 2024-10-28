@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS customers(
     phone_number VARCHAR(10),
     name TEXT,
     address TEXT,
+    address_id INTEGER,
     PRIMARY KEY(phone_number)
 );
 
@@ -56,9 +57,9 @@ INSERT INTO inventory (item_id, product_name, added_date, expiry_date, quantity)
 ('INV002', 'Milk', '2024-10-01', '2024-10-05', 50);
 
 -- Insert data into customers table
-INSERT INTO customers (phone_number, name, address) VALUES
-('1234567890', 'John Doe', '123 Main St'),
-('0987654321', 'Jane Smith', '456 Elm St');
+INSERT INTO customers (phone_number, name, address, address_id) VALUES
+('1234567890', 'John Doe', '123 Main St', 1),
+('0987654321', 'Jane Smith', '456 Elm St', 2);
 
 -- Insert data into transactions table
 INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
