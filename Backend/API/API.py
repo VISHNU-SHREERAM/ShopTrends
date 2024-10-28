@@ -68,6 +68,7 @@ class Charts:
                 labels.append(day); data.append(number_of_transactions)
             return {"data": data, "labels":labels}
         
+        
         @app.get("/transactions_over_months")
         def transactions_per_month():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 7), COUNT(transaction_id) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 7)\
@@ -90,6 +91,16 @@ class Charts:
                 labels.append(year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
 
+        @app.get("/users_over_days")
+        def transactions_per_day():
+            query = "SELECT SUBSTR(purchase_timestamp, 1, 10), COUNT(distinct phone_number) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
+                ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
+            labels = []
+            data = []
+            for day, number_of_transactions in engine.execute(query).fetchall():
+                day = engine.date(day)
+                labels.append(day); data.append(number_of_transactions)
+            return {"data": data, "labels":labels}
 
     class PieBarCharts:
         
