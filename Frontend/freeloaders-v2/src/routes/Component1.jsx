@@ -31,7 +31,7 @@ const Component1 = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${URL_BASE}/transactions_over_days`);
+        const response = await fetch(`${URL_BASE}/sales_over_days`);
         const result = await response.json();
 
         setChartData({

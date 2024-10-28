@@ -1,8 +1,8 @@
 import sqlite3 as sql
 from os import remove, path
 
-if path.exists("database.db"):
-    remove("database.db")
+# if path.exists("database.db"):
+#     remove("database.db")
 
 
 db = sql.connect("database.db")
@@ -68,6 +68,11 @@ INSERT INTO transactions (phone_number, product_name, quantity, purchase_timesta
 
 
 """
+script2="""
+INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
+('1234567890', 'Apple', 5, '2024-10-05 10:30:00', 'Cash'),
+('0987654321', 'Milk', 2, '2024-10-06 14:20:00', 'Card');
 
-cursor.executescript(script)
+"""
+cursor.executescript(script2)
 print("successful")
