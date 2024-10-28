@@ -30,11 +30,11 @@ function App() {
   };
 
   return (
-    <div className="App h-screen overflow-hidden flex flex-col">
+    <div className="App overflow-hidden flex flex-col">
       <Navbar />
       {/* two divs side by side height to 100% no scroll */}
       <div className="flex flex-grow">
-        <div className="w-1/4 bg-[#C9E9D2] h-full">
+        <div className="w-1/4 bg-[#C9E9D2]">
           {/* Buttons with proper animation 3 buttons */}
           <div className="flex flex-col">
             <h1 className="text-2xl text-center mt-4 py-5 font-bold">
@@ -60,7 +60,7 @@ function App() {
             </button>
           </div>
         </div>
-        <div className="w-3/4 bg-[#FEF9F2] h-full p-4">{renderComponent()}</div>
+        <div className="w-3/4 bg-[#FEF9F2] p-4">{renderComponent()}</div>
       </div>
     </div>
   );

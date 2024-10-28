@@ -67,5 +67,11 @@ INSERT INTO transactions (phone_number, product_name, quantity, purchase_timesta
 
 """
 
+script2 = """
+INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
+('123', 'Apple', 20, '2024-10-05 10:30:00', 'Cash'),
+('1234', 'Milk', 3, '2024-10-06 14:20:00', 'Card');
+"""
+
 cursor.executescript(script)
 print("successful")
