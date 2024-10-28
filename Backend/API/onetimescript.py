@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS inventory(
     product_name TEXT,
     added_date VARCHAR(10),
     expiry_date VARCHAR(10),
-    quantity INT,
+    quantity INTEGER,
     PRIMARY KEY(item_id),
     FOREIGN KEY(product_name) REFERENCES products(product_name)
 );
@@ -35,9 +35,10 @@ CREATE TABLE IF NOT EXISTS customers(
 );
 
 CREATE TABLE IF NOT EXISTS transactions(
+    transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     phone_number VARCHAR(10),
     product_name TEXT,
-    quantity INT,
+    quantity INTEGER,
     purchase_timestamp TEXT,
     payment_method TEXT,
     FOREIGN KEY(phone_number) REFERENCES customers(phone_number),
@@ -65,12 +66,6 @@ INSERT INTO transactions (phone_number, product_name, quantity, purchase_timesta
 ('0987654321', 'Milk', 2, '2024-10-04 14:20:00', 'Card');
 
 
-"""
-
-script2 = """
-INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
-('123', 'Apple', 20, '2024-10-05 10:30:00', 'Cash'),
-('1234', 'Milk', 3, '2024-10-06 14:20:00', 'Card');
 """
 
 cursor.executescript(script)

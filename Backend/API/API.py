@@ -24,7 +24,7 @@ class Charts:
 
     class LineGraph:
 
-        @app.get("/transaction_per_day_line")
+        @app.get("/sales_over_days")
         def transactions_per_day():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 10), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
                 ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
@@ -35,7 +35,7 @@ class Charts:
                 labels.append(day); data.append(number_of_transactions)
             return {"data": data, "labels":labels}
         
-        @app.get("/transactions_per_month")
+        @app.get("/sales_over_months")
         def transactions_per_month():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 7), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 7)\
                 ORDER BY SUBSTR(purchase_timestamp, 1, 7) ASC"
@@ -46,7 +46,7 @@ class Charts:
                 labels.append(month_year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
         
-        @app.get("/transactions_per_year")
+        @app.get("/sales_over_years")
         def transactions_per_year():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 4), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 4)\
                 ORDER BY SUBSTR(purchase_timestamp, 1, 4)"
@@ -56,7 +56,41 @@ class Charts:
                 year = engine.year(year)
                 labels.append(year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
+        # --- #
+        @app.get("/transactions_over_days")
+        def transactions_per_day():
+            query = "SELECT SUBSTR(purchase_timestamp, 1, 10), COUNT(transaction_id) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
+                ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
+            labels = []
+            data = []
+            for day, number_of_transactions in engine.execute(query).fetchall():
+                day = engine.date(day)
+                labels.append(day); data.append(number_of_transactions)
+            return {"data": data, "labels":labels}
         
+        @app.get("/transactions_over_months")
+        def transactions_per_month():
+            query = "SELECT SUBSTR(purchase_timestamp, 1, 7), COUNT(transaction_id) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 7)\
+                ORDER BY SUBSTR(purchase_timestamp, 1, 7) ASC"
+            labels = []
+            data = []
+            for month_year, number_of_transactions in engine.execute(query).fetchall():
+                month_year = engine.month(month_year)
+                labels.append(month_year); data.append(number_of_transactions)
+            return {"data": data, "labels": labels}
+        
+        @app.get("/transactions_over_years")
+        def transactions_per_year():
+            query = "SELECT SUBSTR(purchase_timestamp, 1, 4), COUNT(transaction_id) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 4)\
+                ORDER BY SUBSTR(purchase_timestamp, 1, 4)"
+            labels = []
+            data = []
+            for year, number_of_transactions in engine.execute(query).fetchall():
+                year = engine.year(year)
+                labels.append(year); data.append(number_of_transactions)
+            return {"data": data, "labels": labels}
+
+
     class PieBarCharts:
         
         @app.get("/piebar_brand_revenue")
