@@ -44,19 +44,19 @@ function App() {
               onClick={() => setActiveComponent("component1")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Button 1
+              Sales
             </button>
             <button
               onClick={() => setActiveComponent("component2")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Button 2
+              Revenue
             </button>
             <button
               onClick={() => setActiveComponent("component3")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Button 3
+              Coming Soon
             </button>
           </div>
         </div>
