@@ -223,4 +223,4 @@ if __name__ == "__main__":
     
     # Run for 30 minutes with 0.2-1 seconds between transactions
     # This will simulate approximately 60 days of transaction data
-    simulator.run_simulation(duration_minutes=30, transaction_delay=(0.2, 1))
+    simulator.run_simulation(duration_minutes=300, transaction_delay=(0.01, 0.1))
