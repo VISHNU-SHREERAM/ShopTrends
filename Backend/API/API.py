@@ -19,11 +19,43 @@ MONTHS = {
     "12": "Dec"
 }
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+from datetime import datetime
 
 class Charts:
 
     class LineGraph:
+        # @app.get("/sales_on_date/{date}")
 
+        @app.get("/sales_on_date/{date}")
+        def transactions_per_day_(date: str):
+            # Modified query to filter by the specified date
+            query = f"""
+                SELECT SUBSTR(purchase_timestamp, 1, 16) AS date_hour_minute, SUM(quantity)
+                FROM transactions
+                WHERE SUBSTR(purchase_timestamp, 1, 10) = '{date}'
+                GROUP BY date_hour_minute
+                ORDER BY date_hour_minute ASC
+            """
+            labels = []
+            data = []
+            
+            for date_hour_minute, number_of_transactions in engine.execute(query).fetchall():
+                # Convert to datetime (handling both date and time)
+                day = datetime.strptime(date_hour_minute, "%Y-%m-%d %H:%M")  # This handles the full datetime string
+                labels.append(day.strftime("%Y-%m-%d %H:%M"))  # Format it back to string if needed for API response
+                data.append(number_of_transactions)
+            
+            return {"data": data, "labels": labels}
+
+            # def sales_on_date(date: str):
+            #     query = "SELECT SUBSTR(purchase_timestamp, 1, 16), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
+            #         ORDER BY SUBSTR(purchase_timestamp, 1, 16) ASC"
+            #     labels = []
+            #     data = []
+            #     for day, number_of_transactions in engine.execute(query).fetchall():
+            #         day = engine.date(day)
+            #         labels.append(day); data.append(number_of_transactions)
+            #     return {"data": data, "labels":labels} 
         @app.get("/sales_over_days")
         def transactions_per_day():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 10), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
@@ -33,7 +65,7 @@ class Charts:
             for day, number_of_transactions in engine.execute(query).fetchall():
                 day = engine.date(day)
                 labels.append(day); data.append(number_of_transactions)
-            return {"data": data, "labels":labels}
+            return {"data": data, "labels":labels} 
         
         @app.get("/sales_over_months")
         def transactions_per_month():
