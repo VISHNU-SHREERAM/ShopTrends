@@ -19,6 +19,7 @@ ChartJS.register(
   Legend
 );
 
+// const URL_BASE = "https://freeloader.dhruvadeep.cloud";
 const URL_BASE = "http://127.0.0.1:8000";
 
 const Component2 = () => {
@@ -42,7 +43,7 @@ const Component2 = () => {
       };
 
       fetchData();
-    }, 2000);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);

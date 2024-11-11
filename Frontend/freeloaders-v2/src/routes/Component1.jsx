@@ -20,6 +20,7 @@ ChartJS.register(
   Legend
 );
 
+// const URL_BASE = "https://freeloader.dhruvadeep.cloud";
 const URL_BASE = "http://127.0.0.1:8000";
 
 const Component1 = () => {
@@ -27,6 +28,7 @@ const Component1 = () => {
   const [filteredData, setFilteredData] = useState({ labels: [], data: [] });
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState("lastWeek");
+  const [sliderValue, setSliderValue] = useState(0.3);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +48,7 @@ const Component1 = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 100);
 
     return () => clearInterval(interval);
   }, []);
@@ -97,14 +99,18 @@ const Component1 = () => {
     labels: filteredData.labels,
     datasets: [
       {
+<<<<<<< HEAD
         label: "Transactions per day",
+=======
+        label: "Sales Over Days",
+>>>>>>> d079acdd098aaf7352060367d3e6a9074e369beb
         data: filteredData.data,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         pointBackgroundColor: "rgba(75, 192, 192, 1)",
         pointBorderColor: "#fff",
         fill: true,
-        tension: 0.4,
+        tension: sliderValue,
       },
     ],
   };
@@ -150,13 +156,46 @@ const Component1 = () => {
     );
   }
 
+  const calculateGrowthRate = () => {
+    const currentTotal = filteredData.data.reduce((a, b) => a + b, 0);
+
+    // Determine the offset for the previous period based on the selected timeframe
+    let offset;
+    switch (timeframe) {
+      case "lastWeek":
+        offset = 7;
+        break;
+      case "lastMonth":
+        offset = 30; // Approximate 1 month as 30 days
+        break;
+      case "lastYear":
+        offset = 365; // Approximate 1 year as 365 days
+        break;
+      default:
+        offset = 7;
+    }
+
+    // Calculate the previous period data by shifting `chartData.data` back by `offset` days
+    const previousPeriodData = chartData.data
+      .slice(
+        Math.max(chartData.data.length - offset * 2, 0),
+        chartData.data.length - offset
+      )
+      .concat(Array(Math.max(0, offset - chartData.data.length)).fill(0)); // Pad with zeros if needed
+
+    const previousTotal = previousPeriodData.reduce((a, b) => a + b, 0);
+
+    // Avoid division by zero
+    if (previousTotal === 0) return "N/A";
+
+    return (((currentTotal - previousTotal) / previousTotal) * 100).toFixed(2);
+  };
+
   return (
     <div>
       {/* Dropdown and Chart Title */}
       <div className="flex justify-center py-8 items-center">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Transactions over Days
-        </h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Sales over Days</h1>
 
         {/* Dropdown for selecting timeframe */}
         <div className="relative ml-4">
@@ -170,6 +209,18 @@ const Component1 = () => {
             <option value="lastYear">Last Year</option>
           </select>
         </div>
+      </div>
+
+      {/* Toggle Button */}
+      <div className="relative ml-4">
+        <label className="flex items-center space-x-3">
+          <span className="text-gray-700">Smooth Graph</span>
+          <input
+            type="checkbox"
+            onChange={(e) => setSliderValue(e.target.checked ? 0.25 : 0)}
+            className="toggle-checkbox"
+          />
+        </label>
       </div>
 
       {/* Line Chart */}
@@ -296,12 +347,7 @@ const Component1 = () => {
               Growth Rate (compared to last period):
             </p>
             <p className="text-lg font-semibold text-gray-800">
-              {/* Placeholder formula: replace with your own logic */}
-              {(
-                ((filteredData.data.reduce((a, b) => a + b, 0) - 5) / 5) *
-                100
-              ).toFixed(2)}
-              %
+              {calculateGrowthRate()}%
             </p>
           </div>
 
