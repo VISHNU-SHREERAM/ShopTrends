@@ -21,7 +21,6 @@ class APRIORI:
         """
         Get frequent itemsets
         """
-        print(df.size)
         itemsets = apriori(df, min_support=min_support, use_colnames=True)
         return itemsets
     
