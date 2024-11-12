@@ -6,3 +6,5 @@ uvicorn
 pydantic
 matplotlib
 seaborn
+names
+faker
