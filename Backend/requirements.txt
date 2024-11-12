@@ -7,4 +7,5 @@ pydantic
 matplotlib
 seaborn
 names
+mlxtend
 faker

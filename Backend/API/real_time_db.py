@@ -74,12 +74,13 @@ class TransactionSimulator:
                 );
 
                 CREATE TABLE IF NOT EXISTS transactions(
-                    transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    unique_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     phone_number VARCHAR(10),
                     product_name TEXT,
                     quantity INTEGER,
                     purchase_timestamp TEXT,
                     payment_method TEXT,
+                    transaction_id INT,
                     FOREIGN KEY(phone_number) REFERENCES customers(phone_number),
                     FOREIGN KEY(product_name) REFERENCES products(product_name)
                 );
@@ -136,6 +137,8 @@ class TransactionSimulator:
             # Generate other transaction details
             quantity = random.randint(1, 5)
             payment_method = random.choice(self.payment_methods)
+
+            transaction_id = random.randint(1, 200)
             
             # Use simulated time for timestamp
             simulated_time = self.get_simulated_time()
@@ -144,9 +147,9 @@ class TransactionSimulator:
             # Insert transaction
             cursor.execute("""
                 INSERT INTO transactions 
-                (phone_number, product_name, quantity, purchase_timestamp, payment_method)
-                VALUES (?, ?, ?, ?, ?)
-            """, (phone_number, product_name, quantity, purchase_timestamp, payment_method))
+                (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id))
             
             conn.commit()
             

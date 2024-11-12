@@ -5,39 +5,43 @@ import pandas as pd
 
 class APRIORI:
 
-    def encode(self, dataset:list[list]):
+    @staticmethod
+    def encode(dataset:list[list]) -> pd.DataFrame:
         """
         Converts lists to one hot encodings or products.
         A preprocessing step to be done before other applications
         """
         encoder = TransactionEncoder()
         array = encoder.fit_transform(dataset)
-        df = pd.DataFrame(array, encoder.columns_)
+        df = pd.DataFrame(array, columns = encoder.columns_)
         return df
 
-
-    def frequent_itemsets(self, df:pd.DataFrame, min_support:float=0.5):
+    @staticmethod
+    def frequent_itemsets(df:pd.DataFrame, min_support:float=0.5) -> pd.DataFrame:
         """
         Get frequent itemsets
         """
+        print(df.size)
         itemsets = apriori(df, min_support=min_support, use_colnames=True)
         return itemsets
     
-    def association_rules(self, itemsets:pd.DataFrame, num_itemsets:int=5 ,metric:str='confidence', min_threshold:float=0.8):
+    @staticmethod
+    def association_rules(itemsets:pd.DataFrame, num_itemsets:int=5 ,metric:str='confidence', min_threshold:float=0.8) -> pd.DataFrame:
         """
         Get association rules
         """
         chosen_ones = association_rules(itemsets, num_itemsets=num_itemsets ,metric=metric, min_threshold=0.8)
         return chosen_ones
     
-    def get_dataset(self, itemsets: pd.DataFrame, num_itemsets:int=5 ,metric:str='confidence', min_threshold:float=0.8):
+    @staticmethod
+    def get_dataset() -> list[str]:
         """
         Get dataset from database
         """
-        unique_transaction_ids = ENGINE.execute("SELECT distinct(transaction_id) FROM transactions").fetchall()
-        dataset = [0]*len(unique_transaction_ids)
-        for ID in unique_transaction_ids:
+        unique_transaction_ids = ENGINE.execute("SELECT transaction_id FROM transactions").fetchall()
+        dataset = []
+        for (ID,) in unique_transaction_ids:
             query = f"SELECT product_name FROM transactions WHERE transaction_id = {ID}"
-            products = ENGINE.execute(query).fetchall()
-            dataset[ID] = products
+            products = [p for (p,) in ENGINE.execute(query).fetchall()]
+            dataset.append(products)
         return dataset

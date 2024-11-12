@@ -26,3 +26,5 @@ class Engine:
     
     def day(self, string: str):
         return datetime.strptime(string, "%Y-%m-%d").date().weekday()
+    
+ENGINE = Engine()

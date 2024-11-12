@@ -1,9 +1,9 @@
-from API.engine import Engine
+from API.engine import ENGINE
 from fastapi import FastAPI
-
+from Algorithms.apriori_mlxtend import APRIORI
+from collections import Counter
 
 app = FastAPI()
-engine = Engine()
 MONTHS = {
     "1": "Jan",
     "2": "Feb",
@@ -20,6 +20,22 @@ MONTHS = {
 }
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
+
+class RuleMining:
+
+    @app.get("/rulemining/getallitems")
+    def getallitems():
+        data = APRIORI.get_dataset()
+        return {"data":data}
+    
+    @app.get("/rulemining/itemsets")
+    def getitemsets():
+        dataset = APRIORI.get_dataset()
+        encoded = APRIORI.encode(dataset)
+        itemsets = APRIORI.frequent_itemsets(encoded).to_dict()
+        return {"data": itemsets}
+
+
 class Charts:
 
     class LineGraph:
@@ -30,8 +46,8 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
             labels = []
             data = []
-            for day, number_of_transactions in engine.execute(query).fetchall():
-                day = engine.date(day)
+            for day, number_of_transactions in ENGINE.execute(query).fetchall():
+                day = ENGINE.date(day)
                 labels.append(day); data.append(number_of_transactions)
             return {"data": data, "labels":labels}
         
@@ -41,8 +57,8 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 7) ASC"
             labels = []
             data = []
-            for month_year, number_of_transactions in engine.execute(query).fetchall():
-                month_year = engine.month(month_year)
+            for month_year, number_of_transactions in ENGINE.execute(query).fetchall():
+                month_year = ENGINE.month(month_year)
                 labels.append(month_year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
         
@@ -52,22 +68,21 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 4)"
             labels = []
             data = []
-            for year, number_of_transactions in engine.execute(query).fetchall():
-                year = engine.year(year)
+            for year, number_of_transactions in ENGINE.execute(query).fetchall():
+                year = ENGINE.year(year)
                 labels.append(year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
-        # --- #
+        
         @app.get("/transactions_over_days")
         def transactions_per_day():
             query = "SELECT SUBSTR(purchase_timestamp, 1, 10), COUNT(transaction_id) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)\
                 ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
             labels = []
             data = []
-            for day, number_of_transactions in engine.execute(query).fetchall():
-                day = engine.date(day)
+            for day, number_of_transactions in ENGINE.execute(query).fetchall():
+                day = ENGINE.date(day)
                 labels.append(day); data.append(number_of_transactions)
             return {"data": data, "labels":labels}
-        
         
         @app.get("/transactions_over_months")
         def transactions_per_month():
@@ -75,8 +90,8 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 7) ASC"
             labels = []
             data = []
-            for month_year, number_of_transactions in engine.execute(query).fetchall():
-                month_year = engine.month(month_year)
+            for month_year, number_of_transactions in ENGINE.execute(query).fetchall():
+                month_year = ENGINE.month(month_year)
                 labels.append(month_year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
         
@@ -86,8 +101,8 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 4)"
             labels = []
             data = []
-            for year, number_of_transactions in engine.execute(query).fetchall():
-                year = engine.year(year)
+            for year, number_of_transactions in ENGINE.execute(query).fetchall():
+                year = ENGINE.year(year)
                 labels.append(year); data.append(number_of_transactions)
             return {"data": data, "labels": labels}
 
@@ -97,8 +112,8 @@ class Charts:
                 ORDER BY SUBSTR(purchase_timestamp, 1, 10) ASC"
             labels = []
             data = []
-            for day, number_of_transactions in engine.execute(query).fetchall():
-                day = engine.date(day)
+            for day, number_of_transactions in ENGINE.execute(query).fetchall():
+                day = ENGINE.date(day)
                 labels.append(day); data.append(number_of_transactions)
             return {"data": data, "labels":labels}
 
@@ -110,7 +125,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY products.brand_name"
             labels = []
             data = []
-            for brand, amount in engine.execute(query).fetchall():
+            for brand, amount in ENGINE.execute(query).fetchall():
                 labels.append(brand); data.append(amount)
             return {"data": data, "labels": labels}
 
@@ -120,7 +135,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY products.brand_name"
             labels = []
             data = []
-            for brand, sales in engine.execute(query).fetchall():
+            for brand, sales in ENGINE.execute(query).fetchall():
                 labels.append(brand); data.append(sales)
             return {"data": data, "labels": labels}
         
@@ -130,7 +145,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY transactions.payment_method"
             labels = []
             data = []
-            for payment_method, amount in engine.execute(query).fetchall():
+            for payment_method, amount in ENGINE.execute(query).fetchall():
                 labels.append(payment_method); data.append(amount)
             return {"data": data, "labels": labels}
         
@@ -140,7 +155,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY transactions.payment_method"
             labels = []
             data = []
-            for payment_method, sales in engine.execute(query).fetchall():
+            for payment_method, sales in ENGINE.execute(query).fetchall():
                 labels.append(payment_method); data.append(sales)
             return {"data": data, "labels": labels}
         
@@ -150,7 +165,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY products.type"
             labels = []
             data = []
-            for type_, amount in engine.execute(query).fetchall():
+            for type_, amount in ENGINE.execute(query).fetchall():
                 labels.append(type_); data.append(amount)
             return {"data": data, "labels": labels}
         
@@ -160,7 +175,7 @@ class Charts:
                 ON products.product_name = transactions.product_name GROUP BY products.type"
             labels = []
             data = []
-            for type_, sales in engine.execute(query).fetchall():
+            for type_, sales in ENGINE.execute(query).fetchall():
                 labels.append(type_); data.append(sales)
             return {"data": data, "labels": labels}
 
@@ -171,7 +186,7 @@ class Charts:
                 GROUP BY SUBSTR(transactions.purchase_timestamp, 6, 2)"
             labels = []
             data = []
-            for month, revenue in engine.execute(query).fetchall():
+            for month, revenue in ENGINE.execute(query).fetchall():
                 labels.append(MONTHS[month]); data.append(revenue)
             return {"data": data, "labels": labels}
         
@@ -180,7 +195,7 @@ class Charts:
             query = "SELECT SUBSTR(purchase_timestamp, 6, 2), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 6, 2)"
             labels = []
             data = []
-            for month, sales in engine.execute(query).fetchall():
+            for month, sales in ENGINE.execute(query).fetchall():
                 labels.append(MONTHS[month]); data.append(sales)
             return {"data": data, "labels": labels}
 
@@ -191,8 +206,8 @@ class Charts:
                 GROUP BY SUBSTR(purchase_timestamp, 1, 10)"
             labels = []
             data = []
-            for weekday, revenue in engine.execute(query).fetchall():
-                weekday = engine.day(weekday)
+            for weekday, revenue in ENGINE.execute(query).fetchall():
+                weekday = ENGINE.day(weekday)
                 labels.append(WEEKDAYS[weekday]); data.append(revenue)
             return {"data": data, "labels": labels}
         
@@ -201,7 +216,35 @@ class Charts:
             query = "SELECT SUBSTR(purchase_timestamp, 1, 10), SUM(quantity) FROM transactions GROUP BY SUBSTR(purchase_timestamp, 1, 10)"
             labels = []
             data = []
-            for weekday, sales in engine.execute(query).fetchall():
-                weekday = engine.day(weekday)
+            for weekday, sales in ENGINE.execute(query).fetchall():
+                weekday = ENGINE.day(weekday)
                 labels.append(WEEKDAYS[weekday]); data.append(sales)
+            return {"data": data, "labels": labels}
+
+        @app.get("/piebar_product_distribution_by_category")
+        def piebar_product_distribution_by_category(category:str):
+            assert isinstance(category, str)
+            query = f"SELECT product_name, COUNT(product_name) FROM products WHERE type = '{category}' GROUP BY product_name"
+            products_of_category = ENGINE.execute(query).fetchall()
+
+            data = []
+            labels = []
+
+            for key, count in products_of_category:
+                data.append(count); labels.append(key)
+
+            return {"data": data, "labels": labels}
+        
+        @app.get("/piebar_product_distribution_by_brand")
+        def piebar_product_distribution_by_category(brand:str):
+            assert isinstance(brand, str)
+            query = f"SELECT product_name, COUNT(product_name) FROM products WHERE brand_name = '{brand}' GROUP BY product_name"
+            products_of_brand = ENGINE.execute(query).fetchall()
+
+            data = []
+            labels = []
+
+            for key, count in products_of_brand:
+                data.append(count); labels.append(key)
+
             return {"data": data, "labels": labels}
