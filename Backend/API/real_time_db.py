@@ -135,6 +135,8 @@ class TransactionSimulator:
             
             # Generate other transaction details
             payment_method = random.choice(self.payment_methods)
+
+            transaction_id = random.randint(1, 200)
             
             # Use simulated time for timestamp
             simulated_time = self.get_simulated_time()

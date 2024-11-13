@@ -1,8 +1,8 @@
 import sqlite3 as sql
 from os import remove, path
 
-# if path.exists("database.db"):
-#     remove("database.db")
+if path.exists("database.db"):
+    remove("database.db")
 
 
 db = sql.connect("database.db")
@@ -36,12 +36,13 @@ CREATE TABLE IF NOT EXISTS customers(
 );
 
 CREATE TABLE IF NOT EXISTS transactions(
-    transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    unique_id INTEGER PRIMARY KEY AUTOINCREMENT,
     phone_number VARCHAR(10),
     product_name TEXT,
     quantity INTEGER,
     purchase_timestamp TEXT,
     payment_method TEXT,
+    transaction_id INT,
     FOREIGN KEY(phone_number) REFERENCES customers(phone_number),
     FOREIGN KEY(product_name) REFERENCES products(product_name)
 );
@@ -62,17 +63,11 @@ INSERT INTO customers (phone_number, name, address, address_id) VALUES
 ('0987654321', 'Jane Smith', '456 Elm St', 2);
 
 -- Insert data into transactions table
-INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
-('1234567890', 'Apple', 5, '2024-10-03 10:30:00', 'Cash'),
-('0987654321', 'Milk', 2, '2024-10-04 14:20:00', 'Card');
-
-
+INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id) VALUES
+('1234567890', 'Apple', 5, '2024-10-03 10:30:00', 'Cash', 1),
+('0987654321', 'Milk', 2, '2024-10-04 14:20:00', 'Card', 1);
 """
-script2="""
-INSERT INTO transactions (phone_number, product_name, quantity, purchase_timestamp, payment_method) VALUES
-('1234567890', 'Apple', 5, '2024-10-05 10:30:00', 'Cash'),
-('0987654321', 'Milk', 2, '2024-10-06 14:20:00', 'Card');
 
-"""
-cursor.executescript(script2)
+
+cursor.executescript(script)
 print("successful")
