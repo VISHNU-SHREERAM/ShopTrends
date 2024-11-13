@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from Algorithms.apriori_mlxtend import APRIORI
 from collections import Counter
 from typing import Literal
+from pydantic_models import ConsequentRequest, ItemsetRequest, RulesRequest
 
 app = FastAPI()
 MONTHS = {
@@ -30,8 +31,9 @@ class RuleMining:
         data = APRIORI.get_dataset()
         return {"data":data}
     
-    @app.get("/rulemining/itemsets")
-    def getitemsets(min_support:float=0.1, order:Literal["dsc", "asc"]="dsc", top_k:int=3):
+    @app.post("/rulemining/itemsets")
+    def getitemsets(itemset_request:ItemsetRequest):
+        min_support, order, top_k = itemset_request.min_support, itemset_request.order, itemset_request.top_k
         ascending = (order=="asc") # if ascending then True else False
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
@@ -40,8 +42,9 @@ class RuleMining:
         supports = result["support"].to_list()
         return {"data": itemsets, "support": supports}
 
-    @app.get("/rulemining/association_rules")
-    def get_association_rules(min_support:float=0.1, min_lift:float=1, order:Literal["dsc", "asc"]="dsc", top_k:int=3):
+    @app.post("/rulemining/association_rules")
+    def get_association_rules(rules_request: RulesRequest):
+        min_support, min_lift ,order, top_k = rules_request.min_support, rules_request.min_lift ,rules_request.order, rules_request.top_k
         ascending = (order=="asc") # if ascending then True else False
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
@@ -54,11 +57,51 @@ class RuleMining:
                           rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
         return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"]}
     
-    @app.get("rulemining/best_consequents")
-    def get_best_consequents(antecedents: list[str] ,min_support:float=0, min_lift:float=1, order:Literal["dsc", "asc"]="dsc", top_k:int=1):
+    @app.post("/rulemining/best_consequents")
+    def get_best_consequents(consequent_request:ConsequentRequest):
+
+        """
+        Given some antecedents, this will give the top (unless specified otherwise) consequents of those items sorted by lift
+        parameters: ConsequentRequest
+
+        class ConsequentRequest(BaseModel):
+            antecedents: List[str]
+            min_support: float = 0.001
+            min_lift: float = 1
+            order: Literal["dsc", "asc"] = "dsc"
+            top_k: int = 1
+
+        """
+
+        # extracting parameters
+        antecedents, order, min_support, min_lift, top_k = consequent_request.antecedents, consequent_request.order,\
+        consequent_request.min_support, consequent_request.min_lift, consequent_request.top_k
 
         antecedent_set = set(antecedents)
+        ascending = (order=="asc") # if ascending then True else False
+        dataset = APRIORI.get_dataset()
+        encoded = APRIORI.encode(dataset)
+        itemsets = APRIORI.frequent_itemsets(encoded, min_support=min_support)
+        if itemsets.empty:
+            return {"data": []}
+        rules = APRIORI.association_rules(itemsets, min_threshold=min_lift)
+        rules = rules[rules["antecedents"].apply(lambda x: (set(x)&antecedent_set == antecedent_set))].sort_values(by="lift", ascending=ascending).head(top_k)
 
+        answer = list(zip(rules["antecedents"].to_list(), rules["consequents"].to_list(), \
+                          rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
+        
+        return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"], "antecedents_chosen": antecedents}
+        
+    @app.post("/rulemining/xxx1")
+    def xxx1(consequent_request:ConsequentRequest):
+        """
+        keep the function name accordingly
+        """
+        # extracting parameters
+        antecedents, order, min_support, min_lift, top_k = consequent_request.antecedents, consequent_request.order,\
+        consequent_request.min_support, consequent_request.min_lift, consequent_request.top_k
+
+        antecedent_set = set(antecedents)
         ascending = (order=="asc") # if ascending then True else False
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
@@ -72,7 +115,8 @@ class RuleMining:
                           rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
         
         return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"], "antecedents_chosen": antecedents}
-        
+
+
 class Charts:
 
     class LineGraph:
