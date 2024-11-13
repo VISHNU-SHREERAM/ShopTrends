@@ -5,7 +5,7 @@ import time
 import names
 from faker import Faker
 from os import path
-
+from os import remove
 
 class TransactionSimulator:
     def __init__(self, db_name="real_time_database.db"):
@@ -15,8 +15,10 @@ class TransactionSimulator:
         self.product_types = ["Groceries", "Electronics", "Clothing", "Home Goods", "Beauty"]
         self.simulation_start_time = datetime.now()
         self.time_acceleration = 7200  # 2 hours (7200 seconds) per real second
-        if not path.exists("real_time_database.db"):
-            self.setup_initial_data()
+        if path.exists("real_time_database.db"):
+            # delete the database file if it exists
+            remove("real_time_database.db")
+        self.setup_initial_data()
 
     def get_connection(self):
         return sql.connect(self.db_name)
@@ -80,7 +82,7 @@ class TransactionSimulator:
                     quantity INTEGER,
                     purchase_timestamp TEXT,
                     payment_method TEXT,
-                    transaction_id INT,
+                    transaction_id INTEGER,
                     FOREIGN KEY(phone_number) REFERENCES customers(phone_number),
                     FOREIGN KEY(product_name) REFERENCES products(product_name)
                 );
@@ -121,7 +123,7 @@ class TransactionSimulator:
         else:  # Early morning and other times
             return 0.3
 
-    def generate_transaction(self):
+    def generate_transaction(self,num_of_products,curr_transaction_id):
         """Generate a random transaction with simulated timestamp"""
         with self.get_connection() as conn:
             cursor = conn.cursor()
@@ -130,12 +132,8 @@ class TransactionSimulator:
             cursor.execute("SELECT phone_number FROM customers ORDER BY RANDOM() LIMIT 1")
             phone_number = cursor.fetchone()[0]
             
-            # Get random product
-            cursor.execute("SELECT product_name FROM products ORDER BY RANDOM() LIMIT 1")
-            product_name = cursor.fetchone()[0]
             
             # Generate other transaction details
-            quantity = random.randint(1, 5)
             payment_method = random.choice(self.payment_methods)
 
             transaction_id = random.randint(1, 200)
@@ -144,23 +142,29 @@ class TransactionSimulator:
             simulated_time = self.get_simulated_time()
             purchase_timestamp = simulated_time.strftime('%Y-%m-%d %H:%M:%S')
             
-            # Insert transaction
-            cursor.execute("""
-                INSERT INTO transactions 
-                (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id))
-            
-            conn.commit()
-            
-            return {
-                'phone_number': phone_number,
-                'product_name': product_name,
-                'quantity': quantity,
-                'payment_method': payment_method,
-                'timestamp': purchase_timestamp,
-                'simulated_time': simulated_time
-            }
+            for i in range(num_of_products):
+                # Insert transaction
+                # Get random product
+                cursor.execute("SELECT product_name FROM products ORDER BY RANDOM() LIMIT 1")
+                quantity = random.randint(1, 5)
+                product_name = cursor.fetchone()[0]
+                cursor.execute("""
+                    INSERT INTO transactions 
+                    (phone_number, product_name, quantity, purchase_timestamp, payment_method,transaction_id)
+                    VALUES (?, ?, ?, ?, ?,?)
+                """, (phone_number, product_name, quantity, purchase_timestamp, payment_method,curr_transaction_id))
+                
+                conn.commit()
+                
+                yield {
+                    'transaction_id': curr_transaction_id,
+                    'phone_number': phone_number,
+                    'product_name': product_name,
+                    'quantity': quantity,
+                    'payment_method': payment_method,
+                    'timestamp': purchase_timestamp,
+                    'simulated_time': simulated_time
+                }
 
     def run_simulation(self, duration_minutes=None, transaction_delay=(0.2, 1)):
         """
@@ -169,7 +173,7 @@ class TransactionSimulator:
         transaction_delay: Tuple of (min_seconds, max_seconds) between transactions
         """
         start_time = datetime.now()
-        transaction_count = 0
+        transaction_count = 1
         
         try:
             while True:
@@ -178,21 +182,27 @@ class TransactionSimulator:
                 # Check if we should generate a transaction based on time of day
                 if random.random() < self.adjust_transaction_probability(current_simulated_time):
                     # Generate and log transaction
-                    transaction = self.generate_transaction()
+                    num_of_products = random.randint(1, 5)
+                    transactions=[]
+                    for t in self.generate_transaction(num_of_products,transaction_count):
+                        transactions.append(t)
                     transaction_count += 1
                     
                     # Calculate simulated time progression
-                    simulated_elapsed = transaction['simulated_time'] - self.simulation_start_time
+                    simulated_elapsed = transactions[0]['simulated_time'] - self.simulation_start_time
                     simulated_days = simulated_elapsed.days
                     simulated_hours = simulated_elapsed.seconds // 3600
                     
                     print(f"\nTransaction #{transaction_count}")
-                    print(f"Simulated Time: {transaction['timestamp']}")
+                    print(f"Simulated Time: {transactions[0]['timestamp']}")
                     print(f"Simulation Progress: {simulated_days} days, {simulated_hours} hours")
-                    print(f"Customer Phone: {transaction['phone_number']}")
-                    print(f"Product: {transaction['product_name']}")
-                    print(f"Quantity: {transaction['quantity']}")
-                    print(f"Payment Method: {transaction['payment_method']}")
+                    print(f"Customer Phone: {transactions[0]['phone_number']}")
+                    print(f"Payment Method: {transactions[0]['payment_method']}")
+                    print("Products Purchased:")
+                    for transaction in transactions:
+                        print(f"Product: {transaction['product_name']}")
+                        print(f"Quantity: {transaction['quantity']}")
+                        print()
                     print("-" * 50)
                 
                 # Check if duration exceeded
@@ -201,7 +211,7 @@ class TransactionSimulator:
                     if elapsed.total_seconds() >= duration_minutes * 60:
                         print(f"\nSimulation completed: {transaction_count} transactions generated")
                         break
-                
+
                 # Random delay before next transaction
                 delay = random.uniform(transaction_delay[0], transaction_delay[1])
                 time.sleep(delay)
