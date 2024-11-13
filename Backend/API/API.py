@@ -31,18 +31,28 @@ class RuleMining:
         return {"data":data}
     
     @app.get("/rulemining/itemsets")
-    def getitemsets(min_support:float=0.5, order:Literal["dsc", "asc"] = "dsc"):
+    def getitemsets(min_support:float=0.1, order:Literal["dsc", "asc"]="dsc", top_k:int=3):
         ascending = (order=="asc") # if ascending then True else False
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
-        result = APRIORI.frequent_itemsets(encoded, min_support=min_support).sort_values(by="support", ascending=ascending)
+        result = APRIORI.frequent_itemsets(encoded, min_support=min_support).sort_values(by="support", ascending=ascending).head(top_k)
         itemsets = result["itemsets"].to_list()
         supports = result["support"].to_list()
         return {"data": itemsets, "support": supports}
 
     @app.get("/rulemining/association_rules")
-    def get_association_rules(min_support:float=0.5, min_confidence:float=0.5):
-        pass
+    def get_association_rules(min_support:float=0.1, min_lift:float=1, order:Literal["dsc", "asc"]="dsc", top_k:int=3):
+        ascending = (order=="asc") # if ascending then True else False
+        dataset = APRIORI.get_dataset()
+        encoded = APRIORI.encode(dataset)
+        itemsets = APRIORI.frequent_itemsets(encoded, min_support=min_support)
+        if itemsets.empty:
+            return {"data": []}
+        rules = APRIORI.association_rules(itemsets, min_threshold=min_lift).sort_values(by="lift", ascending=ascending).head(top_k)
+
+        answer = list(zip(rules["antecedents"].to_list(), rules["consequents"].to_list(), \
+                          rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
+        return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"]}
 
 class Charts:
 
