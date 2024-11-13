@@ -5,7 +5,7 @@ from os import path
 
 class Engine:
     def __init__(self):
-        self._db_path = "./API/real_time_database.db"
+        self._db_path = "API/real_time_database.db"
 
     def execute(self, query: str) -> sql.Cursor:
         conn = sql.connect(self._db_path)
@@ -26,3 +26,5 @@ class Engine:
     
     def day(self, string: str):
         return datetime.strptime(string, "%Y-%m-%d").date().weekday()
+    
+ENGINE = Engine()
