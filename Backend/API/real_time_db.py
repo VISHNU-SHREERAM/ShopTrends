@@ -18,6 +18,13 @@ class TransactionSimulator:
         if path.exists("real_time_database.db"):
             # delete the database file if it exists
             remove("real_time_database.db")
+        self.itemsets = [
+            ["Milk 1L", "Bread", "Eggs 12pc"],
+            ["Headphones", "USB Cable"],
+            ["T-Shirt", "Jeans"],
+            ["Bedsheet", "Home Goods", "Pillows"],
+            ["Shampoo", "Moisturizer"]
+        ]
         self.setup_initial_data()
 
     def get_connection(self):
@@ -135,13 +142,34 @@ class TransactionSimulator:
             
             # Generate other transaction details
             payment_method = random.choice(self.payment_methods)
-
-            transaction_id = random.randint(1, 200)
             
             # Use simulated time for timestamp
             simulated_time = self.get_simulated_time()
             purchase_timestamp = simulated_time.strftime('%Y-%m-%d %H:%M:%S')
             
+            prob_of_rule = random.random()
+            if prob_of_rule <= 0.7: # if the customer follows trend
+                itemset = random.choice(self.itemsets)
+                for product_name in itemset:
+                    quantity = random.randint(1, 2)
+                    cursor.execute("""
+                        INSERT INTO transactions 
+                        (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id)
+                        VALUES (?, ?, ?, ?, ?,?)
+                    """, (phone_number, product_name, quantity, purchase_timestamp, payment_method,curr_transaction_id))
+                    
+                    conn.commit()
+                    
+                    yield {
+                        'transaction_id': curr_transaction_id,
+                        'phone_number': phone_number,
+                        'product_name': product_name,
+                        'quantity': quantity,
+                        'payment_method': payment_method,
+                        'timestamp': purchase_timestamp,
+                        'simulated_time': simulated_time
+                    }
+
             for i in range(num_of_products):
                 # Insert transaction
                 # Get random product
@@ -150,7 +178,7 @@ class TransactionSimulator:
                 product_name = cursor.fetchone()[0]
                 cursor.execute("""
                     INSERT INTO transactions 
-                    (phone_number, product_name, quantity, purchase_timestamp, payment_method,transaction_id)
+                    (phone_number, product_name, quantity, purchase_timestamp, payment_method, transaction_id)
                     VALUES (?, ?, ?, ?, ?,?)
                 """, (phone_number, product_name, quantity, purchase_timestamp, payment_method,curr_transaction_id))
                 

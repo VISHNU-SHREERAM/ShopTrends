@@ -2,6 +2,7 @@ from API.engine import ENGINE
 from fastapi import FastAPI
 from Algorithms.apriori_mlxtend import APRIORI
 from collections import Counter
+from typing import Literal
 
 app = FastAPI()
 MONTHS = {
@@ -30,14 +31,17 @@ class RuleMining:
         return {"data":data}
     
     @app.get("/rulemining/itemsets")
-    def getitemsets(min_support=0.5):
+    def getitemsets(min_support:float=0.5, order:Literal["dsc", "asc"] = "dsc"):
+        ascending = (order=="asc") # if ascending then True else False
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
-        itemsets = APRIORI.frequent_itemsets(encoded, min_support=min_support).to_dict()
-        return {"data": itemsets}
+        result = APRIORI.frequent_itemsets(encoded, min_support=min_support).sort_values(by="support", ascending=ascending)
+        itemsets = result["itemsets"].to_list()
+        supports = result["support"].to_list()
+        return {"data": itemsets, "support": supports}
 
     @app.get("/rulemining/association_rules")
-    def get_association_rules(min_support=0.5):
+    def get_association_rules(min_support:float=0.5, min_confidence:float=0.5):
         pass
 
 class Charts:
