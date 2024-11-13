@@ -12,6 +12,8 @@ import Navbar from "./components/Navbar";
 import Component1 from "./routes/Component1";
 import Component2 from "./routes/Component2";
 import Component3 from "./routes/Component3";
+import CategoryDistribution from "./routes/CategoryDistribution";
+import Recommendation from "./routes/Recommendation";
 
 function App() {
   const [activeComponent, setActiveComponent] = useState("component1");
@@ -24,6 +26,10 @@ function App() {
         return <Component2 />;
       case "component3":
         return <Component3 />;
+      case "categoryDistribution":
+        return <CategoryDistribution />;
+      case "recommendation":
+        return <Recommendation />;
       default:
         return <div>Select a service</div>;
     }
@@ -44,19 +50,31 @@ function App() {
               onClick={() => setActiveComponent("component1")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Sales
+              Sales 💹
             </button>
             <button
               onClick={() => setActiveComponent("component2")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Revenue
+              Revenue 💸
             </button>
             <button
               onClick={() => setActiveComponent("component3")}
               className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
             >
-              Coming Soon
+              Over a Day 🔥
+            </button>
+            <button
+              onClick={() => setActiveComponent("categoryDistribution")}
+              className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
+            >
+              Category Wise Distribution 📊
+            </button>
+            <button
+              onClick={() => setActiveComponent("recommendation")}
+              className="bg-[#789DBC] text-white p-2 m-2 rounded-md transition duration-200 hover:bg-[#5a7b98]"
+            >
+              Recommendations 🎯
             </button>
           </div>
         </div>

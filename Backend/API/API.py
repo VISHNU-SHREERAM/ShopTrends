@@ -177,7 +177,47 @@ class Charts:
             return {"data": data, "labels":labels}
 
     class PieBarCharts:
-        
+        @app.get("/piebar_category_revenue")
+        def piebar_category_revenue():
+            query = "SELECT products.type, SUM(transactions.quantity * products.price) FROM products INNER JOIN transactions\
+                ON products.product_name = transactions.product_name GROUP BY products.type"
+            labels = []
+            data = []
+            for category, amount in ENGINE.execute(query).fetchall():
+                labels.append(category); data.append(amount)
+            return {"data": data, "labels": labels}
+        @app.get("/piebar_brand_revenue_of_particular_category/{category}")
+        def piebar_brand_revenue_of_particular_category(category:str):
+            assert isinstance(category, str)
+            query = f"SELECT products.brand_name, SUM(transactions.quantity * products.price) FROM products INNER JOIN transactions\
+                ON products.product_name = transactions.product_name WHERE products.type = '{category}' GROUP BY products.brand_name"
+            labels = []
+            data = []
+            for brand, amount in ENGINE.execute(query).fetchall():
+                labels.append(brand); data.append(amount)
+            return {"data": data, "labels": labels}
+        @app.get("/piebar_brand_revenue_of_particular_category_date/{category}/{start_date}/{end_date}")
+        def piebar_brand_revenue_of_particular_category_date(category:str, start_date:str, end_date:str):
+            assert isinstance(category, str)
+            assert isinstance(start_date, str)
+            assert isinstance(end_date, str)
+            # print(start_date, end_date)
+
+            # convert date to datetime
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+            # print(start_date, end_date)
+
+            query = f"SELECT products.brand_name, SUM(transactions.quantity * products.price) FROM products INNER JOIN transactions\
+                ON products.product_name = transactions.product_name WHERE products.type = '{category}' and transactions.purchase_timestamp BETWEEN '{start_date}' AND '{end_date}' GROUP BY products.brand_name"
+            # print(query)0
+            labels = []
+            data = []
+            for brand, amount in ENGINE.execute(query).fetchall():
+                labels.append(brand); data.append(amount)
+            return {"data": data, "labels": labels, "start_date": start_date, "end_date": end_date}
+
+
         @app.get("/piebar_brand_revenue")
         def piebar_brand_revenue():
             query = "SELECT products.brand_name, SUM(transactions.quantity * products.price) FROM products INNER JOIN transactions\
