@@ -21,7 +21,7 @@ ChartJS.register(
 );
 
 // const URL_BASE = "https://freeloader.dhruvadeep.cloud";
-const URL_BASE = "http://127.0.0.1:8000";
+const URL_BASE = "http://10.32.14.170:8000";
 
 const Component1 = () => {
   const [chartData, setChartData] = useState({ labels: [], data: [] });
