@@ -29,12 +29,15 @@ class RuleMining:
         return {"data":data}
     
     @app.get("/rulemining/itemsets")
-    def getitemsets():
+    def getitemsets(min_support=0.5):
         dataset = APRIORI.get_dataset()
         encoded = APRIORI.encode(dataset)
-        itemsets = APRIORI.frequent_itemsets(encoded).to_dict()
+        itemsets = APRIORI.frequent_itemsets(encoded, min_support=min_support).to_dict()
         return {"data": itemsets}
 
+    @app.get("/rulemining/association_rules")
+    def get_association_rules(min_support=0.5):
+        pass
 
 class Charts:
 

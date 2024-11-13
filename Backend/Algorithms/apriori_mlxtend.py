@@ -25,11 +25,11 @@ class APRIORI:
         return itemsets
     
     @staticmethod
-    def association_rules(itemsets:pd.DataFrame, num_itemsets:int=5 ,metric:str='confidence', min_threshold:float=0.8) -> pd.DataFrame:
+    def association_rules(itemsets:pd.DataFrame, num_itemsets:int=5 ,metric:str='lift', min_threshold=0) -> pd.DataFrame:
         """
         Get association rules
         """
-        chosen_ones = association_rules(itemsets, num_itemsets=num_itemsets ,metric=metric, min_threshold=0.8)
+        chosen_ones = association_rules(itemsets, num_itemsets=num_itemsets ,metric=metric, min_threshold=min_threshold)
         return chosen_ones
     
     @staticmethod
