@@ -99,11 +99,7 @@ const Component1 = () => {
     labels: filteredData.labels,
     datasets: [
       {
-<<<<<<< HEAD
-        label: "Transactions per day",
-=======
         label: "Sales Over Days",
->>>>>>> d079acdd098aaf7352060367d3e6a9074e369beb
         data: filteredData.data,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",

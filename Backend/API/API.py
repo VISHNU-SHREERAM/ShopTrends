@@ -25,7 +25,17 @@ class Charts:
 
     class LineGraph:
         # @app.get("/sales_on_date/{date}")
-
+        # @app.get("/recommeder/{item}")
+        # def 
+        
+        @app.get("/get_all_products")
+        def get_all_products():
+            query = "SELECT * FROM products"
+            labels = []
+            data = []
+            for product in engine.execute(query).fetchall():
+                labels.append(product[0]); data.append(product[1])
+            return {"data": data, "labels": labels}
         @app.get("/sales_on_date/{date}")
         def transactions_per_day_(date: str):
             # Modified query to filter by the specified date
