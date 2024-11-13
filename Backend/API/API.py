@@ -53,7 +53,26 @@ class RuleMining:
         answer = list(zip(rules["antecedents"].to_list(), rules["consequents"].to_list(), \
                           rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
         return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"]}
+    
+    @app.get("rulemining/best_consequents")
+    def get_best_consequents(antecedents: list[str] ,min_support:float=0, min_lift:float=1, order:Literal["dsc", "asc"]="dsc", top_k:int=1):
 
+        antecedent_set = set(antecedents)
+
+        ascending = (order=="asc") # if ascending then True else False
+        dataset = APRIORI.get_dataset()
+        encoded = APRIORI.encode(dataset)
+        itemsets = APRIORI.frequent_itemsets(encoded, min_support=min_support)
+        if itemsets.empty:
+            return {"data": []}
+        rules = APRIORI.association_rules(itemsets, min_threshold=min_lift)
+        rules = rules[rules["antecedents"].apply(lambda x: (set(x)&antecedent_set == set(x)))].sort_values(by="lift", ascending=ascending).head(top_k)
+
+        answer = list(zip(rules["antecedents"].to_list(), rules["consequents"].to_list(), \
+                          rules["support"].to_list(), rules["confidence"].to_list(), rules["lift"].to_list()))
+        
+        return {"data": answer, "order": ["antecedents", "consequents", "support", "confidence", "lift"], "antecedents_chosen": antecedents}
+        
 class Charts:
 
     class LineGraph:
