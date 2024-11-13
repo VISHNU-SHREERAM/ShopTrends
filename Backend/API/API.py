@@ -21,7 +21,7 @@ MONTHS = {
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 from datetime import datetime
 
-
+engine=ENGINE
 class RuleMining:
 
     @app.get("/rulemining/getallitems")
