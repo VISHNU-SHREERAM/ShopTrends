@@ -1,6 +1,48 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+// image import from assets
 
-const URL_BASE = "http://10.32.14.170:8000";
+import milk from "../assets/Images/milk.jpg";
+import bread from "../assets/Images/bread.jpg";
+import rice from "../assets/Images/rice.jpg";
+import eggs from "../assets/Images/eggs.jpg";
+import headphones from "../assets/Images/headphones.jpg";
+import powerbank from "../assets/Images/powerbank.jpg";
+import usb from "../assets/Images/USB cable.jpg";
+import tshirt from "../assets/Images/T_shirt.jpg";
+import jeans from "../assets/Images/jeans.jpg";
+import socks from "../assets/Images/socks.jpg";
+import bedsheet from "../assets/Images/bed_sheet.jpg";
+import towel from "../assets/Images/towel.jpg";
+import pillows from "../assets/Images/pillow.jpg";
+import shampoo from "../assets/Images/shampoo.jpg";
+import facewash from "../assets/Images/face_wash.jpg";
+import moisturizer from "../assets/Images/moisturizer.jpg";
+
+// const URL_BASE = "http://10.32.14.170:8000";
+// const URL_BASE = "http://10.128.11.129:8000";
+// const URL_BASE = "http://10.128.10.57:8000";
+// const URL_BASE = "https://freeloader.dhruvadeep.cloud";
+const URL_BASE = "http://localhost:8000";
+
+// const image_URL = "../assets/Images/";
+const imgSrc = {
+  "Milk 1L": milk,
+  Bread: bread,
+  "Rice 1kg": rice,
+  "Eggs 12pc": eggs,
+  Headphones: headphones,
+  "Power Bank": powerbank,
+  "USB Cable": usb,
+  "T-Shirt": tshirt,
+  Jeans: jeans,
+  Socks: socks,
+  Bedsheet: bedsheet,
+  Towel: towel,
+  Pillows: pillows,
+  Shampoo: shampoo,
+  "Face Wash": facewash,
+  Moisturizer: moisturizer,
+};
 
 function Recommendation() {
   const [labels, setLabels] = useState([]);
@@ -47,7 +89,7 @@ function Recommendation() {
   const generateSuggestion = (concequent, antecedent) => {
     if (concequent.length === 0) return "";
     const randomIndex = Math.floor(Math.random() * concequent.length);
-    const suggestion = `We suggest you to buy ${
+    const suggestion = `We recommend bundle offers on ${
       concequent[randomIndex]
     } along with ${antecedent.join(", ")}.`;
     return suggestion;
@@ -166,11 +208,7 @@ function Recommendation() {
                   key={index}
                   className="flex-none w-40 h-40 border rounded-lg flex flex-col items-center justify-center bg-gray-100"
                 >
-                  <img
-                    src="https://picsum.photos/100/100"
-                    alt={item}
-                    className="mb-2"
-                  />
+                  <img src={imgSrc[item]} alt={item} className="mb-2" />
                   <span className="text-center">{item}</span>
                 </div>
               ))}

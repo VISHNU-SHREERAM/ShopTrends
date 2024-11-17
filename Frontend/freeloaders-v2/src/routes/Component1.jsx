@@ -20,8 +20,10 @@ ChartJS.register(
   Legend
 );
 
-// const URL_BASE = "https://freeloader.dhruvadeep.cloud";
-const URL_BASE = "http://10.32.14.170:8000";
+// const URL_BASE = "http://10.128.10.57:8000";
+// const URL_BASE = "http://10.32.14.170:8000";
+const URL_BASE = "http://localhost:8000";
+// const URL_BASE = "http://10.128.11.129:8000";
 
 const Component1 = () => {
   const [chartData, setChartData] = useState({ labels: [], data: [] });
@@ -153,39 +155,36 @@ const Component1 = () => {
   }
 
   const calculateGrowthRate = () => {
-    const currentTotal = filteredData.data.reduce((a, b) => a + b, 0);
+    if (filteredData.data.length < 2) return "N/A";
 
-    // Determine the offset for the previous period based on the selected timeframe
-    let offset;
-    switch (timeframe) {
-      case "lastWeek":
-        offset = 7;
-        break;
-      case "lastMonth":
-        offset = 30; // Approximate 1 month as 30 days
-        break;
-      case "lastYear":
-        offset = 365; // Approximate 1 year as 365 days
-        break;
-      default:
-        offset = 7;
-    }
-
-    // Calculate the previous period data by shifting `chartData.data` back by `offset` days
-    const previousPeriodData = chartData.data
-      .slice(
-        Math.max(chartData.data.length - offset * 2, 0),
-        chartData.data.length - offset
-      )
-      .concat(Array(Math.max(0, offset - chartData.data.length)).fill(0)); // Pad with zeros if needed
-
-    const previousTotal = previousPeriodData.reduce((a, b) => a + b, 0);
+    const startValue = filteredData.data[0];
+    const endValue = filteredData.data[filteredData.data.length - 1];
 
     // Avoid division by zero
-    if (previousTotal === 0) return "N/A";
+    if (startValue === 0) return "N/A";
 
-    return (((currentTotal - previousTotal) / previousTotal) * 100).toFixed(2);
+    return (((endValue - startValue) / startValue) * 100).toFixed(2);
   };
+
+  const getGrowthRateColor = () => {
+    const rate = parseFloat(calculateGrowthRate());
+    return rate > 0 ? "text-green-600" : "text-red-600";
+  };
+  //   // Calculate the previous period data by shifting `chartData.data` back by `offset` days
+  //   const previousPeriodData = chartData.data
+  //     .slice(
+  //       Math.max(chartData.data.length - offset * 2, 0),
+  //       chartData.data.length - offset
+  //     )
+  //     .concat(Array(Math.max(0, offset - chartData.data.length)).fill(0)); // Pad with zeros if needed
+
+  //   const previousTotal = previousPeriodData.reduce((a, b) => a + b, 0);
+
+  //   // Avoid division by zero
+  //   if (previousTotal === 0) return "N/A";
+
+  //   return (((currentTotal - previousTotal) / previousTotal) * 100).toFixed(2);
+  // };
 
   return (
     <div>
@@ -322,7 +321,7 @@ const Component1 = () => {
           </div>
         </div>
 
-        {/* Business Analytics Block */}
+        {/* Updated Business Analytics Block */}
         <div className="w-full md:w-1/2 lg:w-1/3 px-4 py-4 bg-white shadow-md rounded-lg border border-gray-200">
           <h1 className="text-xl font-bold mb-4 text-center text-gray-700">
             Business Analytics
@@ -336,13 +335,10 @@ const Component1 = () => {
             </p>
           </div>
 
-          {/* Transaction Growth Rate */}
-          {/* Assuming previousData is preloaded and available for comparison */}
+          {/* Updated Growth Rate */}
           <div className="mb-4">
-            <p className="text-sm text-gray-600">
-              Growth Rate (compared to last period):
-            </p>
-            <p className="text-lg font-semibold text-gray-800">
+            <p className="text-sm text-gray-600">Growth Rate (Start to End):</p>
+            <p className={`text-lg font-semibold ${getGrowthRateColor()}`}>
               {calculateGrowthRate()}%
             </p>
           </div>
