@@ -19,11 +19,11 @@ class TransactionSimulator:
             # delete the database file if it exists
             remove("real_time_database.db")
         self.itemsets = [
-            ["Milk 1L", "Bread", "Eggs 12pc"],
-            ["Headphones", "USB Cable"],
-            ["T-Shirt", "Jeans"],
-            ["Bedsheet", "Home Goods", "Pillows"],
-            ["Shampoo", "Moisturizer"]
+            ["Milk 1L", "Bread", "Eggs 12pc", "Rice 1kg"],
+            ["Headphones", "USB Cable","Power Bank"],
+            ["T-Shirt", "Jeans","Socks"],
+            ["Towel","Bedsheet", "Pillows"],
+            ["Shampoo", "Moisturizer","Face Wash"]
         ]
         self.setup_initial_data()
 
