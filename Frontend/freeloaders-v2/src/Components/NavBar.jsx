@@ -13,7 +13,7 @@ const NavBar = () => {
       role="navigation"
     >
       <div className="pl-8 text-white font-bold text-2xl">
-        Data Analytics - Freeloader
+        Data Analytics - ShopTrends
       </div>
 
       {/* Mobile menu button */}
