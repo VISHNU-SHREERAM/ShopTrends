@@ -1,11 +1,24 @@
+
+
 from API.engine import ENGINE
 from fastapi import FastAPI
 from Algorithms.apriori_mlxtend import APRIORI
 from collections import Counter
 from typing import Literal
 from pydantic_models import ConsequentRequest, ItemsetRequest, RulesRequest
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+# import response from FastAPI
+
 MONTHS = {
     "1": "Jan",
     "2": "Feb",

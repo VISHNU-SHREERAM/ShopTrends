@@ -21,7 +21,7 @@ ChartJS.register(
 
 // const URL_BASE = "http://10.128.10.57:8000";
 // const URL_BASE = "http://10.32.14.170:8000";
-const URL_BASE = "http://localhost:8000";
+const URL_BASE = "https://upgraded-broccoli-4xw4g7vw5jrcj7vj-8000.app.github.dev";
 // const URL_BASE = "http://10.128.11.129:8000";
 
 const Component2 = () => {

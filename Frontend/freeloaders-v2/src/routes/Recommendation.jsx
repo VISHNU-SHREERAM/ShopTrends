@@ -22,7 +22,7 @@ import moisturizer from "../assets/Images/moisturizer.jpg";
 // const URL_BASE = "http://10.128.11.129:8000";
 // const URL_BASE = "http://10.128.10.57:8000";
 // const URL_BASE = "https://freeloader.dhruvadeep.cloud";
-const URL_BASE = "http://localhost:8000";
+const URL_BASE = "https://upgraded-broccoli-4xw4g7vw5jrcj7vj-8000.app.github.dev";
 
 // const image_URL = "../assets/Images/";
 const imgSrc = {

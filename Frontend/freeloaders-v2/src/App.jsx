@@ -8,7 +8,10 @@ import "./index.css";
 // #C9E9D2
 
 import { useState } from "react";
-import Navbar from "./components/Navbar";
+
+import Navbar from "./Components/NavBar";
+// import Navbar from "./Components/Navbar";
+
 import Component1 from "./routes/Component1";
 import Component2 from "./routes/Component2";
 import Component3 from "./routes/Component3";
